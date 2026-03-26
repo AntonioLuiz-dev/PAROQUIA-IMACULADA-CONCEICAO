@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Paróquia Imaculada Conceição</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:#1a2744; --navy-dark:#111a30;
+      --gold:#b8933f; --gold-light:#d4aa5a; --gold-pale:#f0e4c4;
+      --cream:#f8f4ec; --cream-dark:#ede6d8;
+      --text:#2c2c2c; --text-light:#5a5a5a;
+      --white:#ffffff; --border:#d6c9a8;
+      --red:#c0392b; --green:#27ae60;
+    }
+    html { font-size: 17px; }
+    body { font-family: 'Crimson Text', Georgia, serif; background: #eef0f5; color: var(--text); }
+    a { color: inherit; text-decoration: none; }
+
+    /* LOGIN */
+    .login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--navy) 0%,#243060 100%); }
+    .login-box { background:white; padding:44px 42px; width:400px; border-top:4px solid var(--gold); text-align:center; }
+    .login-brasao { width:110px; height:110px; object-fit:contain; margin:0 auto 18px; display:block; filter:drop-shadow(0 2px 8px rgba(0,0,0,.25)); }
+    .login-box h1 { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--navy); margin-bottom:7px; }
+    .login-box p { font-size:15px; color:var(--text-light); margin-bottom:28px; }
+    .login-box input { width:100%; padding:13px 14px; border:1px solid var(--border); font-size:17px; font-family:inherit; margin-bottom:16px; outline:none; transition:border-color .2s; text-align:left; }
+    .login-box input:focus { border-color:var(--gold); }
+    .btn-primary { width:100%; padding:14px; background:var(--navy); color:var(--gold-light); border:none; cursor:pointer; font-family:'Playfair Display',serif; font-size:15px; letter-spacing:.08em; text-transform:uppercase; transition:background .2s; }
+    .btn-primary:hover { background:var(--gold); color:white; }
+    .login-error { color:var(--red); font-size:14px; margin-top:12px; display:none; }
+
+    /* ADMIN LAYOUT */
+    .admin-wrap { display:none; min-height:100vh; }
+    .admin-header { background:var(--navy-dark); padding:0 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--gold); position:sticky; top:0; z-index:100; }
+    .admin-header h1 { font-family:'Playfair Display',serif; color:var(--gold-light); font-size:1.25rem; padding:16px 0; }
+    .admin-header-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .btn-sm { padding:9px 20px; font-size:13px; letter-spacing:.07em; text-transform:uppercase; font-family:'Playfair Display',serif; cursor:pointer; border:none; transition:background .2s; }
+    .btn-save { background:var(--gold); color:white; }
+    .btn-save:hover { background:#a07830; }
+    .btn-logout { background:rgba(255,255,255,.1); color:rgba(255,255,255,.6); }
+    .btn-logout:hover { background:rgba(255,255,255,.2); color:white; }
+    .btn-back { background:transparent; color:var(--gold-pale); border:1px solid rgba(255,255,255,.2); }
+    .btn-back:hover { background:rgba(255,255,255,.08); }
+
+    .admin-body { display:flex; }
+
+    /* SIDEBAR */
+    .admin-sidebar { width:260px; flex-shrink:0; background:var(--navy); min-height:calc(100vh - 62px); padding:18px 0; position:sticky; top:62px; height:calc(100vh - 62px); overflow-y:auto; }
+    .sidebar-item { display:block; padding:13px 26px; color:rgba(255,255,255,.65); font-size:15.5px; cursor:pointer; border-left:3px solid transparent; transition:all .15s; }
+    .sidebar-item:hover { color:var(--gold-pale); background:rgba(255,255,255,.05); }
+    .sidebar-item.active { color:var(--gold-light); border-left-color:var(--gold); background:rgba(255,255,255,.07); }
+    .sidebar-sep { padding:10px 26px 5px; color:rgba(255,255,255,.28); font-size:12px; text-transform:uppercase; letter-spacing:.1em; }
+
+    /* CONTENT */
+    .admin-content { flex:1; padding:32px; min-width:0; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .section-head { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--navy); margin-bottom:24px; padding-bottom:12px; border-bottom:2px solid var(--gold); }
+
+    /* CARDS */
+    .card { background:white; border:1px solid var(--border); border-top:3px solid var(--gold); padding:24px; margin-bottom:22px; }
+    .card-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--navy); margin-bottom:16px; font-weight:600; }
+
+    /* FORM */
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+    .form-row.single { grid-template-columns:1fr; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--text-light); margin-bottom:6px; text-transform:uppercase; letter-spacing:.07em; }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:10px 12px; border:1px solid var(--border); font-family:'Crimson Text',serif; font-size:16px; color:var(--text); background:var(--cream); outline:none; transition:border-color .2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color:var(--gold); background:white; }
+    .form-group textarea { resize:vertical; min-height:88px; }
+    .form-hint { font-size:13px; color:var(--text-light); margin-top:4px; font-style:italic; }
+
+    /* LISTAS */
+    .item-list { display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
+    .item-card { background:var(--cream); border:1px solid var(--border); padding:16px 20px; position:relative; }
+    .item-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .item-card-title { font-family:'Playfair Display',serif; font-weight:600; color:var(--navy); font-size:16px; }
+    .item-actions { display:flex; gap:8px; }
+    .btn-del, .btn-add, .btn-edit-toggle { padding:7px 14px; font-size:13px; letter-spacing:.05em; font-family:'Playfair Display',serif; cursor:pointer; border:none; text-transform:uppercase; }
+    .btn-del { background:var(--red); color:white; }
+    .btn-del:hover { background:#a93226; }
+    .btn-add { background:var(--navy); color:var(--gold-light); margin-top:6px; display:inline-block; }
+    .btn-add:hover { background:var(--gold); color:white; }
+    .btn-edit-toggle { background:var(--navy); color:var(--gold-pale); }
+    .btn-edit-toggle:hover { background:var(--gold); color:white; }
+    .item-fields { display:none; }
+    .item-fields.open { display:block; }
+
+    /* MISSAS */
+    .missa-item { display:grid; grid-template-columns:1fr 1fr 1.2fr auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--cream-dark); }
+    .missa-item input { padding:8px 10px; font-size:15px; }
+
+    /* HORÁRIOS GENÉRICOS */
+    .horario-item { display:grid; grid-template-columns:1fr 1fr auto; gap:10px; align-items:start; padding:10px 0; border-bottom:1px solid var(--cream-dark); }
+    .horario-item textarea { min-height:60px; }
+
+    /* EXPEDIENTE */
+    .expd-item { display:grid; grid-template-columns:1fr 1fr auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--cream-dark); }
+    .expd-item input { padding:8px 10px; }
+
+    /* CALENDÁRIO */
+    .cal-admin-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center; margin-bottom:18px; }
+    .cal-admin-header { font-size:13px; font-weight:700; color:var(--text-light); padding:5px 0; }
+    .cal-admin-day { font-size:15px; padding:8px 3px; cursor:pointer; border:1px solid transparent; border-radius:2px; transition:all .15s; background:white; }
+    .cal-admin-day:hover { border-color:var(--gold); background:var(--gold-pale); }
+    .cal-admin-day.today { background:var(--navy); color:white; }
+    .cal-admin-day.has-event { background:var(--gold-pale); border-color:var(--gold); font-weight:700; color:var(--navy); }
+    .cal-admin-day.other-month { color:var(--border); background:#f5f5f5; }
+    .cal-nav-admin { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .cal-nav-admin button { background:var(--navy); color:var(--gold-light); border:none; cursor:pointer; width:32px; height:32px; font-size:18px; }
+    .cal-month-title { font-family:'Playfair Display',serif; font-weight:600; color:var(--navy); font-size:17px; }
+    .event-edit-panel { background:var(--gold-pale); border:1px solid var(--gold); padding:18px; margin-top:14px; display:none; }
+    .event-edit-panel.open { display:block; }
+    .event-edit-panel h4 { font-family:'Playfair Display',serif; color:var(--navy); margin-bottom:14px; font-size:16px; }
+    .event-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:white; border:1px solid var(--border); margin-bottom:8px; }
+    .event-row-info { flex:1; }
+    .event-row-title { font-weight:600; font-size:15px; color:var(--navy); }
+    .event-row-desc { font-size:14px; color:var(--text-light); }
+
+    /* MENSAGENS */
+    .contact-msg-card { background:white; border:1px solid var(--border); padding:16px 20px; margin-bottom:12px; }
+    .contact-msg-header { display:flex; justify-content:space-between; margin-bottom:8px; }
+    .contact-msg-name { font-family:'Playfair Display',serif; font-weight:600; color:var(--navy); font-size:16px; }
+    .contact-msg-date { font-size:13px; color:var(--text-light); }
+    .contact-msg-meta { font-size:14px; color:var(--text-light); margin-bottom:10px; }
+    .contact-msg-body { font-size:16px; color:var(--text); line-height:1.6; }
+    .no-msgs { color:var(--text-light); font-size:16px; font-style:italic; padding:24px 0; }
+
+    /* TOAST */
+    .toast { position:fixed; bottom:28px; right:28px; z-index:9999; background:var(--navy); color:var(--gold-light); padding:14px 26px; font-family:'Playfair Display',serif; font-size:15px; letter-spacing:.06em; opacity:0; transform:translateY(10px); transition:opacity .3s,transform .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+
+    @media (max-width: 800px) {
+      .admin-sidebar { display:none; }
+      .form-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-box">
+    <img class="login-brasao" src="./assets/BRASAO DA PAROQUIA DE RAIZ DA SERRA.png" alt="Brasão da Paróquia" onerror="this.style.display='none'">
+    <h1>Painel de Administração</h1>
+    <p>Paróquia Imaculada Conceição - Raiz da Serra</p>
+    <input type="password" id="login-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-wrap" id="admin-screen">
+  <div class="admin-header">
+    <h1>&#9997; Admin - Paróquia Imaculada Conceição</h1>
+    <div class="admin-header-actions">
+      <button class="btn-sm btn-save" onclick="saveAll()">Salvar tudo</button>
+      <a href="index.html" class="btn-sm btn-back">&#8592; Ver site</a>
+      <button class="btn-sm btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+    <div class="admin-sidebar">
+      <div class="sidebar-sep">Geral</div>
+      <div class="sidebar-item active" onclick="showSection('sec-paroquia',this)">Paróquia</div>
+      <div class="sidebar-item" onclick="showSection('sec-social',this)">Redes Sociais</div>
+      <div class="sidebar-sep">Equipe</div>
+      <div class="sidebar-item" onclick="showSection('sec-bispo',this)">Nosso Bispo</div>
+      <div class="sidebar-item" onclick="showSection('sec-padres',this)">Padres</div>
+      <div class="sidebar-sep">Conteúdo</div>
+      <div class="sidebar-item" onclick="showSection('sec-comunidades',this)">Comunidades</div>
+      <div class="sidebar-item" onclick="showSection('sec-noticias',this)">Notícias</div>
+      <div class="sidebar-item" onclick="showSection('sec-videos',this)">Vídeos</div>
+      <div class="sidebar-item" onclick="showSection('sec-missas',this)">Horários de Missas</div>
+      <div class="sidebar-item" onclick="showSection('sec-calendario',this)">Calendário</div>
+      <div class="sidebar-sep">Seções do Site</div>
+      <div class="sidebar-item" onclick="showSection('sec-atendimento-admin',this)">Atendimento e Confissões</div>
+      <div class="sidebar-item" onclick="showSection('sec-adoracao-admin',this)">Adoração ao Santíssimo</div>
+      <div class="sidebar-item" onclick="showSection('sec-expediente-admin',this)">Expediente da Secretaria</div>
+      <div class="sidebar-sep">Outros</div>
+      <div class="sidebar-item" onclick="showSection('sec-contatos',this)">Mensagens Recebidas</div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- PARÓQUIA -->
+      <div class="section active" id="sec-paroquia">
+        <div class="section-head">Informações da Paróquia</div>
+        <div class="card">
+          <div class="form-group"><label>Cidade / Estado / CEP</label><input id="p-cidade" type="text"></div>
+          <div class="form-group"><label>Endereço</label><input id="p-endereco" type="text"></div>
+          <div class="form-group"><label>Secretaria (texto completo)</label><textarea id="p-secretaria" rows="2"></textarea></div>
+        </div>
+      </div>
+
+      <!-- REDES SOCIAIS -->
+      <div class="section" id="sec-social">
+        <div class="section-head">Redes Sociais</div>
+        <div class="card">
+          <div class="form-group"><label>Instagram (URL)</label><input id="s-instagram" type="url" placeholder="https://instagram.com/..."></div>
+          <div class="form-group"><label>WhatsApp (URL)</label><input id="s-whatsapp" type="text" placeholder="https://wa.me/5524..."></div>
+          <div class="form-group"><label>Facebook (URL)</label><input id="s-facebook" type="url"></div>
+          <div class="form-group"><label>YouTube (URL)</label><input id="s-youtube" type="url"></div>
+        </div>
+      </div>
+
+      <!-- BISPO -->
+      <div class="section" id="sec-bispo">
+        <div class="section-head">Nosso Bispo</div>
+        <div class="card">
+          <div class="form-row">
+            <div class="form-group"><label>Nome</label><input id="b-name" type="text"></div>
+            <div class="form-group"><label>Cargo</label><input id="b-role" type="text"></div>
+          </div>
+          <div class="form-group"><label>URL da Foto</label><input id="b-img" type="text"></div>
+          <div class="form-group"><label>Biografia</label><textarea id="b-bio" rows="4"></textarea></div>
+        </div>
+      </div>
+
+      <!-- PADRES -->
+      <div class="section" id="sec-padres">
+        <div class="section-head">Padres</div>
+        <div class="item-list" id="padres-admin-list"></div>
+        <button class="btn-add" onclick="addPadre()">+ Adicionar Padre</button>
+      </div>
+
+      <!-- COMUNIDADES -->
+      <div class="section" id="sec-comunidades">
+        <div class="section-head">Comunidades</div>
+        <div class="item-list" id="comunidades-admin-list"></div>
+        <button class="btn-add" onclick="addComunidade()">+ Adicionar Comunidade</button>
+      </div>
+
+      <!-- NOTÍCIAS -->
+      <div class="section" id="sec-noticias">
+        <div class="section-head">Notícias</div>
+        <div class="item-list" id="noticias-admin-list"></div>
+        <button class="btn-add" onclick="addNoticia()">+ Adicionar Notícia</button>
+      </div>
+
+      <!-- VÍDEOS -->
+      <div class="section" id="sec-videos">
+        <div class="section-head">Vídeos</div>
+        <div class="item-list" id="videos-admin-list"></div>
+        <button class="btn-add" onclick="addVideo()">+ Adicionar Vídeo</button>
+      </div>
+
+      <!-- MISSAS -->
+      <div class="section" id="sec-missas">
+        <div class="section-head">Horários de Missas</div>
+        <div class="card">
+          <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;">Marque "Comunidade" para itens de comunidades (ficam com cor dourada).</p>
+          <div id="missas-admin-list"></div>
+          <button class="btn-add" onclick="addMissa()">+ Adicionar Linha</button>
+        </div>
+      </div>
+
+      <!-- CALENDÁRIO -->
+      <div class="section" id="sec-calendario">
+        <div class="section-head">Calendário de Eventos</div>
+        <div class="card">
+          <div class="cal-nav-admin">
+            <button onclick="adminCalPrev()">&#8249;</button>
+            <span class="cal-month-title" id="admin-cal-month"></span>
+            <button onclick="adminCalNext()">&#8250;</button>
+          </div>
+          <div class="cal-admin-grid" id="admin-cal-grid"></div>
+          <div class="event-edit-panel" id="event-edit-panel">
+            <h4 id="event-edit-date-label">Eventos em --/--/----</h4>
+            <div class="event-list" id="event-list"></div>
+            <div style="display:grid;gap:8px;margin-bottom:10px;">
+              <input type="text" id="new-event-title" placeholder="Título do evento" style="padding:8px 10px;border:1px solid var(--border);font-family:inherit;font-size:15px;">
+              <textarea id="new-event-desc" placeholder="Descrição (opcional)" rows="2" style="padding:8px 10px;border:1px solid var(--border);font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+            </div>
+            <button class="btn-add" onclick="addCalEvent()">+ Adicionar evento neste dia</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATENDIMENTO E CONFISSÕES -->
+      <div class="section" id="sec-atendimento-admin">
+        <div class="section-head">Atendimento e Confissões</div>
+        <div class="card">
+          <div class="form-group">
+            <label>Texto introdutório</label>
+            <textarea id="at-intro" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Horários</div>
+          <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Dia | Horário (use Enter dentro do campo Horário para quebrar linha)</p>
+          <div id="at-horarios-list"></div>
+          <button class="btn-add" onclick="addAtHorario()">+ Adicionar Horário</button>
+        </div>
+      </div>
+
+      <!-- ADORAÇÃO AO SANTÍSSIMO -->
+      <div class="section" id="sec-adoracao-admin">
+        <div class="section-head">Adoração ao Santíssimo Sacramento</div>
+        <div class="card">
+          <div class="form-group">
+            <label>Citação em destaque</label>
+            <textarea id="ad-citacao" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Texto introdutório</label>
+            <textarea id="ad-intro" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Horários</div>
+          <div id="ad-horarios-list"></div>
+          <button class="btn-add" onclick="addAdHorario()">+ Adicionar Horário</button>
+        </div>
+      </div>
+
+      <!-- EXPEDIENTE -->
+      <div class="section" id="sec-expediente-admin">
+        <div class="section-head">Expediente da Secretaria Paroquial</div>
+        <div class="card">
+          <div class="form-group">
+            <label>Texto introdutório</label>
+            <textarea id="ex-intro" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Linhas de Horário</div>
+          <div id="ex-linhas-list"></div>
+          <button class="btn-add" onclick="addExLinha()">+ Adicionar Linha</button>
+        </div>
+        <div class="card">
+          <div class="form-group">
+            <label>Observação / Aviso</label>
+            <textarea id="ex-obs" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENSAGENS -->
+      <div class="section" id="sec-contatos">
+        <div class="section-head">Mensagens Recebidas</div>
+        <div id="contatos-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================ AUTH */
+const ADMIN_PASS = 'paroquia2026';
+
+function doLogin() {
+  if (document.getElementById('login-pass').value === ADMIN_PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    initAdmin();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('login-pass').value = '';
+}
+
+/* ============================================================ DADOS */
+const DEFAULT_DATA = {
+  social:{instagram:'#',whatsapp:'#',facebook:'#',youtube:'#'},
+  paroquia:{cidade:'Raiz da Serra/ Inhomirim – MAGÉ – RJ, CEP: 25935-000',endereco:'Estr. Automóvel Clube, Km 63',secretaria:'Secretaria Paroquial: Igreja Santa Catarina - Rua Rogério Portella, 78, Fragoso – Magé – RJ, CEP: 25.935.192'},
+  bispo:{name:'Dom Joel Portella Amado',role:'Bispo Diocesano de Petrópolis',img:'./assets/D. JOEL PORTELLA AMADO.jpg',bio:'Dom Joel Portella Amado é o Bispo Diocesano de Petrópolis.'},
+  comunidades:[],padres:[],noticias:[],videos:[],
+  missas:[{dia:'Seg - Sex',hora:'7h',comunidade:false},{dia:'Sábado',hora:'8h e 18h',comunidade:false},{dia:'Domingo',hora:'7h, 9h e 18h',comunidade:false}],
+  calendario:{},
+  atendimento:{intro:'',horarios:[]},
+  adoracao:{citacao:'',intro:'',horarios:[]},
+  expediente:{intro:'',linhas:[],obs:''}
+};
+
+let DATA = {};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('paroquia_data');
+    if (saved) DATA = JSON.parse(saved);
+    else DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  } catch(e) { DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+  ['social','paroquia','bispo','calendario'].forEach(k => { if(!DATA[k]) DATA[k]=DEFAULT_DATA[k]; });
+  ['comunidades','padres','noticias','videos','missas'].forEach(k => { if(!DATA[k]) DATA[k]=[]; });
+  if(!DATA.atendimento) DATA.atendimento={intro:'',horarios:[]};
+  if(!DATA.adoracao) DATA.adoracao={citacao:'',intro:'',horarios:[]};
+  if(!DATA.expediente) DATA.expediente={intro:'',linhas:[],obs:''};
+}
+
+function saveAll() {
+  collectAll();
+  localStorage.setItem('paroquia_data', JSON.stringify(DATA));
+  showToast('Dados salvos com sucesso!');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ============================================================ NAV */
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'sec-contatos') renderContatos();
+  if (id === 'sec-calendario') renderAdminCal();
+}
+
+/* ============================================================ INIT */
+function initAdmin() {
+  loadData();
+  document.getElementById('p-cidade').value = DATA.paroquia.cidade||'';
+  document.getElementById('p-endereco').value = DATA.paroquia.endereco||'';
+  document.getElementById('p-secretaria').value = DATA.paroquia.secretaria||'';
+  document.getElementById('s-instagram').value = DATA.social.instagram||'';
+  document.getElementById('s-whatsapp').value = DATA.social.whatsapp||'';
+  document.getElementById('s-facebook').value = DATA.social.facebook||'';
+  document.getElementById('s-youtube').value = DATA.social.youtube||'';
+  document.getElementById('b-name').value = DATA.bispo.name||'';
+  document.getElementById('b-role').value = DATA.bispo.role||'';
+  document.getElementById('b-img').value = DATA.bispo.img||'';
+  document.getElementById('b-bio').value = DATA.bispo.bio||'';
+  document.getElementById('at-intro').value = DATA.atendimento.intro||'';
+  document.getElementById('ad-citacao').value = DATA.adoracao.citacao||'';
+  document.getElementById('ad-intro').value = DATA.adoracao.intro||'';
+  document.getElementById('ex-intro').value = DATA.expediente.intro||'';
+  document.getElementById('ex-obs').value = DATA.expediente.obs||'';
+  renderPadresAdmin(); renderComunidadesAdmin(); renderNoticiasAdmin();
+  renderVideosAdmin(); renderMissasAdmin(); renderAdminCal();
+  renderAtHorarios(); renderAdHorarios(); renderExLinhas();
+}
+
+/* ============================================================ COLLECT ALL */
+function collectAll() {
+  DATA.paroquia.cidade = document.getElementById('p-cidade').value;
+  DATA.paroquia.endereco = document.getElementById('p-endereco').value;
+  DATA.paroquia.secretaria = document.getElementById('p-secretaria').value;
+  DATA.social.instagram = document.getElementById('s-instagram').value;
+  DATA.social.whatsapp = document.getElementById('s-whatsapp').value;
+  DATA.social.facebook = document.getElementById('s-facebook').value;
+  DATA.social.youtube = document.getElementById('s-youtube').value;
+  DATA.bispo.name = document.getElementById('b-name').value;
+  DATA.bispo.role = document.getElementById('b-role').value;
+  DATA.bispo.img = document.getElementById('b-img').value;
+  DATA.bispo.bio = document.getElementById('b-bio').value;
+  DATA.atendimento.intro = document.getElementById('at-intro').value;
+  DATA.adoracao.citacao = document.getElementById('ad-citacao').value;
+  DATA.adoracao.intro = document.getElementById('ad-intro').value;
+  DATA.expediente.intro = document.getElementById('ex-intro').value;
+  DATA.expediente.obs = document.getElementById('ex-obs').value;
+  collectPadres(); collectComunidades(); collectNoticias();
+  collectVideos(); collectMissas(); collectAtHorarios();
+  collectAdHorarios(); collectExLinhas();
+}
+
+/* ============================================================ PADRES */
+function renderPadresAdmin() {
+  document.getElementById('padres-admin-list').innerHTML = DATA.padres.map((p,i) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <span class="item-card-title">${p.name||'Padre '+(i+1)}</span>
+        <div class="item-actions">
+          <button class="btn-edit-toggle" onclick="toggleFields('padre-f-${i}')">Editar</button>
+          <button class="btn-del" onclick="delPadre(${i})">Remover</button>
+        </div>
+      </div>
+      <div class="item-fields" id="padre-f-${i}">
+        <div class="form-row">
+          <div class="form-group"><label>Nome</label><input id="padre-name-${i}" value="${esc(p.name)}"></div>
+          <div class="form-group"><label>Cargo</label><input id="padre-role-${i}" value="${esc(p.role)}"></div>
+        </div>
+        <div class="form-group"><label>URL da Foto</label><input id="padre-img-${i}" value="${esc(p.img)}"></div>
+        <div class="form-group"><label>Biografia</label><textarea id="padre-bio-${i}" rows="3">${esc(p.bio)}</textarea></div>
+      </div>
+    </div>`).join('');
+}
+function collectPadres() {
+  DATA.padres = DATA.padres.map((_,i) => ({
+    name: val('padre-name-'+i), role: val('padre-role-'+i),
+    img: val('padre-img-'+i), bio: val('padre-bio-'+i)
+  }));
+}
+function addPadre() { collectPadres(); DATA.padres.push({name:'Novo Padre',role:'',img:'',bio:''}); renderPadresAdmin(); toggleFields('padre-f-'+(DATA.padres.length-1)); }
+function delPadre(i) { collectPadres(); DATA.padres.splice(i,1); renderPadresAdmin(); }
+
+/* ============================================================ COMUNIDADES */
+function renderComunidadesAdmin() {
+  document.getElementById('comunidades-admin-list').innerHTML = DATA.comunidades.map((c,i) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <span class="item-card-title">${c.name||'Comunidade '+(i+1)}</span>
+        <div class="item-actions">
+          <button class="btn-edit-toggle" onclick="toggleFields('com-f-${i}')">Editar</button>
+          <button class="btn-del" onclick="delCom(${i})">Remover</button>
+        </div>
+      </div>
+      <div class="item-fields" id="com-f-${i}">
+        <div class="form-row">
+          <div class="form-group"><label>Nome</label><input id="com-name-${i}" value="${esc(c.name)}"></div>
+          <div class="form-group"><label>Localização</label><input id="com-sub-${i}" value="${esc(c.sub)}"></div>
+        </div>
+        <div class="form-group"><label>URL da Foto</label><input id="com-img-${i}" value="${esc(c.img)}"></div>
+        <div class="form-group"><label>História</label><textarea id="com-hist-${i}" rows="4">${esc(c.historia)}</textarea></div>
+        <div class="form-group"><label>Horários de Missa (um por linha: Dia | Hora)</label>
+          <textarea id="com-missas-${i}" rows="3">${c.missas.map(m=>m.dia+'|'+m.hora).join('\n')}</textarea></div>
+      </div>
+    </div>`).join('');
+}
+function collectComunidades() {
+  DATA.comunidades = DATA.comunidades.map((_,i) => {
+    const missasRaw = val('com-missas-'+i);
+    const missas = missasRaw.split('\n').filter(l=>l.trim()).map(l => { const p=l.split('|'); return {dia:(p[0]||'').trim(),hora:(p[1]||'').trim()}; });
+    return { name:val('com-name-'+i), sub:val('com-sub-'+i), img:val('com-img-'+i), historia:val('com-hist-'+i), missas };
+  });
+}
+function addCom() { collectComunidades(); DATA.comunidades.push({name:'Nova Comunidade',sub:'',img:'',historia:'',missas:[]}); renderComunidadesAdmin(); toggleFields('com-f-'+(DATA.comunidades.length-1)); }
+function delCom(i) { collectComunidades(); DATA.comunidades.splice(i,1); renderComunidadesAdmin(); }
+
+/* ============================================================ NOTÍCIAS */
+function renderNoticiasAdmin() {
+  document.getElementById('noticias-admin-list').innerHTML = DATA.noticias.map((n,i) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <span class="item-card-title">${n.title||'Notícia '+(i+1)}</span>
+        <div class="item-actions">
+          <button class="btn-edit-toggle" onclick="toggleFields('not-f-${i}')">Editar</button>
+          <button class="btn-del" onclick="delNot(${i})">Remover</button>
+        </div>
+      </div>
+      <div class="item-fields" id="not-f-${i}">
+        <div class="form-row">
+          <div class="form-group"><label>Título</label><input id="not-title-${i}" value="${esc(n.title)}"></div>
+          <div class="form-group"><label>Categoria</label><input id="not-cat-${i}" value="${esc(n.cat)}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Data</label><input id="not-date-${i}" value="${esc(n.date)}"></div>
+          <div class="form-group"><label>URL da Imagem</label><input id="not-img-${i}" value="${esc(n.img)}"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function collectNoticias() {
+  DATA.noticias = DATA.noticias.map((_,i) => ({title:val('not-title-'+i),cat:val('not-cat-'+i),date:val('not-date-'+i),img:val('not-img-'+i)}));
+}
+function addNoticia() { collectNoticias(); DATA.noticias.push({title:'Nova Notícia',cat:'Paróquia',date:'',img:''}); renderNoticiasAdmin(); toggleFields('not-f-'+(DATA.noticias.length-1)); }
+function delNot(i) { collectNoticias(); DATA.noticias.splice(i,1); renderNoticiasAdmin(); }
+
+/* ============================================================ VÍDEOS */
+function renderVideosAdmin() {
+  document.getElementById('videos-admin-list').innerHTML = DATA.videos.map((v,i) => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <span class="item-card-title">${v.title||'Vídeo '+(i+1)}</span>
+        <div class="item-actions">
+          <button class="btn-edit-toggle" onclick="toggleFields('vid-f-${i}')">Editar</button>
+          <button class="btn-del" onclick="delVid(${i})">Remover</button>
+        </div>
+      </div>
+      <div class="item-fields" id="vid-f-${i}">
+        <div class="form-group"><label>Título</label><input id="vid-title-${i}" value="${esc(v.title)}"></div>
+        <div class="form-row">
+          <div class="form-group"><label>URL do Vídeo</label><input id="vid-url-${i}" value="${esc(v.url)}"></div>
+          <div class="form-group"><label>URL da Thumbnail</label><input id="vid-img-${i}" value="${esc(v.img)}"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function collectVideos() {
+  DATA.videos = DATA.videos.map((_,i) => ({title:val('vid-title-'+i),url:val('vid-url-'+i),img:val('vid-img-'+i)}));
+}
+function addVideo() { collectVideos(); DATA.videos.push({title:'Novo Vídeo',url:'#',img:''}); renderVideosAdmin(); toggleFields('vid-f-'+(DATA.videos.length-1)); }
+function delVid(i) { collectVideos(); DATA.videos.splice(i,1); renderVideosAdmin(); }
+
+/* ============================================================ MISSAS */
+function renderMissasAdmin() {
+  document.getElementById('missas-admin-list').innerHTML = DATA.missas.map((m,i) => `
+    <div class="missa-item">
+      <input id="missa-dia-${i}" value="${esc(m.dia)}" placeholder="Dia / Período">
+      <input id="missa-hora-${i}" value="${esc(m.hora)}" placeholder="Horário">
+      <input id="missa-com-${i}" value="${esc(m.comunidade||'')}" placeholder="Comunidade (opcional)">
+      <button class="btn-del" onclick="delMissa(${i})">&#10005;</button>
+    </div>`).join('');
+}
+function collectMissas() {
+  DATA.missas = DATA.missas.map((_,i) => ({dia:val('missa-dia-'+i),hora:val('missa-hora-'+i),comunidade:val('missa-com-'+i)}));
+}
+function addMissa() { collectMissas(); DATA.missas.push({dia:'',hora:'',comunidade:false}); renderMissasAdmin(); }
+function delMissa(i) { collectMissas(); DATA.missas.splice(i,1); renderMissasAdmin(); }
+
+/* ============================================================ ATENDIMENTO HORÁRIOS */
+function renderAtHorarios() {
+  const list = document.getElementById('at-horarios-list');
+  list.innerHTML = (DATA.atendimento.horarios||[]).map((h,i) => `
+    <div class="horario-item">
+      <div><label style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px;">Dia</label>
+        <input id="at-h-dia-${i}" value="${esc(h.dia)}" style="padding:7px 9px;border:1px solid var(--border);font-family:inherit;font-size:14px;width:100%;"></div>
+      <div><label style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px;">Horário</label>
+        <textarea id="at-h-hora-${i}" rows="2" style="padding:7px 9px;border:1px solid var(--border);font-family:inherit;font-size:14px;width:100%;resize:vertical;">${esc(h.hora)}</textarea></div>
+      <button class="btn-del" onclick="delAtH(${i})" style="margin-top:20px;">&#10005;</button>
+    </div>`).join('');
+}
+function collectAtHorarios() {
+  DATA.atendimento.horarios = (DATA.atendimento.horarios||[]).map((_,i) => ({dia:val('at-h-dia-'+i),hora:val('at-h-hora-'+i)}));
+}
+function addAtHorario() { collectAtHorarios(); DATA.atendimento.horarios.push({dia:'',hora:''}); renderAtHorarios(); }
+function delAtH(i) { collectAtHorarios(); DATA.atendimento.horarios.splice(i,1); renderAtHorarios(); }
+
+/* ============================================================ ADORAÇÃO HORÁRIOS */
+function renderAdHorarios() {
+  const list = document.getElementById('ad-horarios-list');
+  list.innerHTML = (DATA.adoracao.horarios||[]).map((h,i) => `
+    <div class="horario-item">
+      <div><label style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px;">Dia</label>
+        <input id="ad-h-dia-${i}" value="${esc(h.dia)}" style="padding:7px 9px;border:1px solid var(--border);font-family:inherit;font-size:14px;width:100%;"></div>
+      <div><label style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px;">Horário</label>
+        <input id="ad-h-hora-${i}" value="${esc(h.hora)}" style="padding:7px 9px;border:1px solid var(--border);font-family:inherit;font-size:14px;width:100%;"></div>
+      <button class="btn-del" onclick="delAdH(${i})" style="margin-top:20px;">&#10005;</button>
+    </div>`).join('');
+}
+function collectAdHorarios() {
+  DATA.adoracao.horarios = (DATA.adoracao.horarios||[]).map((_,i) => ({dia:val('ad-h-dia-'+i),hora:val('ad-h-hora-'+i)}));
+}
+function addAdHorario() { collectAdHorarios(); DATA.adoracao.horarios.push({dia:'',hora:''}); renderAdHorarios(); }
+function delAdH(i) { collectAdHorarios(); DATA.adoracao.horarios.splice(i,1); renderAdHorarios(); }
+
+/* ============================================================ EXPEDIENTE LINHAS */
+function renderExLinhas() {
+  const list = document.getElementById('ex-linhas-list');
+  list.innerHTML = (DATA.expediente.linhas||[]).map((l,i) => `
+    <div class="expd-item">
+      <input id="ex-l-dia-${i}" value="${esc(l.dia)}" placeholder="Dia" style="padding:7px 9px;border:1px solid var(--border);font-family:inherit;font-size:14px;">
+      <input id="ex-l-hora-${i}" value="${esc(l.hora)}" placeholder="Horário" style="padding:7px 9px;border:1px solid var(--border);font-family:inherit;font-size:14px;">
+      <button class="btn-del" onclick="delExL(${i})">&#10005;</button>
+    </div>`).join('');
+}
+function collectExLinhas() {
+  DATA.expediente.linhas = (DATA.expediente.linhas||[]).map((_,i) => ({dia:val('ex-l-dia-'+i),hora:val('ex-l-hora-'+i)}));
+}
+function addExLinha() { collectExLinhas(); DATA.expediente.linhas.push({dia:'',hora:''}); renderExLinhas(); }
+function delExL(i) { collectExLinhas(); DATA.expediente.linhas.splice(i,1); renderExLinhas(); }
+
+/* ============================================================ CALENDÁRIO */
+let adminCalDate = new Date();
+let selectedCalKey = null;
+const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function adminCalPrev() { adminCalDate.setMonth(adminCalDate.getMonth()-1); renderAdminCal(); }
+function adminCalNext() { adminCalDate.setMonth(adminCalDate.getMonth()+1); renderAdminCal(); }
+
+function renderAdminCal() {
+  const grid = document.getElementById('admin-cal-grid');
+  const nameEl = document.getElementById('admin-cal-month');
+  if (!grid || !nameEl) return;
+  const year = adminCalDate.getFullYear(), month = adminCalDate.getMonth();
+  const today = new Date();
+  nameEl.textContent = MONTHS[month] + ' ' + year;
+  grid.innerHTML = '';
+  ['D','S','T','Q','Q','S','S'].forEach(d => { const h=document.createElement('div'); h.className='cal-admin-header'; h.textContent=d; grid.appendChild(h); });
+  const firstDay = new Date(year,month,1).getDay();
+  const daysInMonth = new Date(year,month+1,0).getDate();
+  const daysInPrev = new Date(year,month,0).getDate();
+  for (let i=0;i<firstDay;i++) { const el=document.createElement('div'); el.className='cal-admin-day other-month'; el.textContent=daysInPrev-firstDay+1+i; grid.appendChild(el); }
+  for (let d=1;d<=daysInMonth;d++) {
+    const key = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const el=document.createElement('div');
+    let cls='cal-admin-day';
+    if (d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear()) cls+=' today';
+    if (DATA.calendario&&DATA.calendario[key]) cls+=' has-event';
+    el.className=cls; el.textContent=d;
+    el.onclick=()=>selectCalDay(key,d,month,year);
+    grid.appendChild(el);
+  }
+  const rem=7-((firstDay+daysInMonth)%7||7);
+  for (let i=1;i<=rem&&rem<7;i++) { const el=document.createElement('div'); el.className='cal-admin-day other-month'; el.textContent=i; grid.appendChild(el); }
+  if (selectedCalKey) { document.getElementById('event-edit-panel').classList.add('open'); renderEventList(); }
+}
+
+function selectCalDay(key,day,month,year) {
+  selectedCalKey=key;
+  document.getElementById('event-edit-date-label').textContent='Eventos em '+day+' de '+MONTHS[month]+' de '+year;
+  document.getElementById('event-edit-panel').classList.add('open');
+  document.getElementById('new-event-title').value='';
+  document.getElementById('new-event-desc').value='';
+  renderEventList();
+}
+
+function renderEventList() {
+  const list=document.getElementById('event-list');
+  if (!selectedCalKey||!DATA.calendario[selectedCalKey]) { list.innerHTML='<p style="font-size:13px;color:var(--text-light);margin-bottom:8px;">Nenhum evento neste dia.</p>'; return; }
+  const evts=Array.isArray(DATA.calendario[selectedCalKey])?DATA.calendario[selectedCalKey]:[DATA.calendario[selectedCalKey]];
+  list.innerHTML=evts.map((e,i)=>`<div class="event-row"><div class="event-row-info"><div class="event-row-title">${e.titulo||''}</div><div class="event-row-desc">${e.descricao||''}</div></div><button class="btn-del" onclick="delCalEvent('${selectedCalKey}',${i})">&#10005;</button></div>`).join('');
+}
+
+function addCalEvent() {
+  if (!selectedCalKey) return;
+  const titulo=document.getElementById('new-event-title').value.trim();
+  const descricao=document.getElementById('new-event-desc').value.trim();
+  if (!titulo) { alert('Digite um título para o evento.'); return; }
+  if (!DATA.calendario) DATA.calendario={};
+  const existing=DATA.calendario[selectedCalKey];
+  const arr=existing?(Array.isArray(existing)?existing:[existing]):[];
+  arr.push({titulo,descricao});
+  DATA.calendario[selectedCalKey]=arr;
+  document.getElementById('new-event-title').value='';
+  document.getElementById('new-event-desc').value='';
+  renderEventList(); renderAdminCal();
+  showToast('Evento adicionado. Lembre de salvar!');
+}
+
+function delCalEvent(key,idx) {
+  const ev=DATA.calendario[key];
+  const arr=Array.isArray(ev)?ev:[ev];
+  arr.splice(idx,1);
+  if (arr.length===0) delete DATA.calendario[key]; else DATA.calendario[key]=arr;
+  renderEventList(); renderAdminCal();
+}
+
+/* ============================================================ MENSAGENS */
+function renderContatos() {
+  const list=document.getElementById('contatos-list');
+  try {
+    const msgs=JSON.parse(localStorage.getItem('paroquia_contatos')||'[]');
+    if (!msgs.length) { list.innerHTML='<p class="no-msgs">Nenhuma mensagem recebida ainda.</p>'; return; }
+    list.innerHTML=msgs.reverse().map(m=>{
+      const d=new Date(m.data);
+      return `<div class="contact-msg-card">
+        <div class="contact-msg-header"><span class="contact-msg-name">${esc(m.nome)}</span><span class="contact-msg-date">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+        <div class="contact-msg-meta">${esc(m.email)}${m.tel?' | '+esc(m.tel):''}</div>
+        <div class="contact-msg-body">${esc(m.msg)}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML='<p class="no-msgs">Erro ao carregar mensagens.</p>'; }
+}
+
+/* ============================================================ UTILS */
+function toggleFields(id) { const el=document.getElementById(id); if(el) el.classList.toggle('open'); }
+function val(id) { const el=document.getElementById(id); return el?el.value:''; }
+function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
