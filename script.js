@@ -1,4 +1,366 @@
 /* ============================================================
+   SISTEMA DE TRADUÇÃO
+   ============================================================ */
+
+const translations = {
+  pt: {
+    // Top Bar
+    'liturgia-diaria': 'Liturgia Diária',
+    'santo-do-dia': 'Santo do Dia',
+    'som': 'Som',
+    'admin': 'Admin',
+    
+    // Header
+    'paroquia-title': 'Paróquia Imaculada Conceição',
+    'paroquia-subtitle': 'Raiz da Serra - Diocese de Petrópolis',
+    
+    // Navigation
+    'inicio': 'Início',
+    'atendimento-confissoes': 'Atendimento e Confissões',
+    'adoracao-santissimo': 'Adoração ao Santíssimo',
+    'expediente-secretaria': 'Expediente da Secretaria',
+    'contato': 'Contato',
+    
+    // Hero
+    'bem-vindos': 'Bem-vindos à Nossa Paróquia',
+    'hero-text': 'Unidos na fé, na oração e no serviço ao próximo, na Paróquia de Raiz da Serra.',
+    
+    // Widgets
+    'comunidades': 'Comunidades',
+    'nosso-bispo': 'Nosso Bispo',
+    'nossos-padres': 'Nossos Padres',
+    'liturgia-diaria-widget': 'Liturgia Diária',
+    'leituras-dia': 'Leituras do dia',
+    'santo-do-dia-widget': 'Santo do Dia',
+    'vatican-news': 'Vatican News',
+    'calendario-paroquia': 'Calendário da Paróquia',
+    'horarios-missas': 'Horários de Missas',
+    
+    // Sections
+    'noticias-paroquia': 'Notícias da Paróquia',
+    'videos': 'Vídeos',
+    'atendimento-confissoes-title': 'Atendimento e Confissões',
+    'adoracao-santissimo-title': 'Adoração ao Santíssimo Sacramento',
+    'expediente-secretaria-title': 'Expediente da Secretaria Paroquial',
+    
+    // Footer
+    'navegacao': 'Navegação',
+    'direitos-reservados': '© 2026 Paróquia Imaculada Conceição de Raiz da Serra. Todos os direitos reservados.',
+    'desenvolvido-por': 'Desenvolvido por antonioluiz.dev@outlook.com',
+    
+    // Contact Modal
+    'entre-contato': 'Entre em Contato',
+    'nome': 'Nome',
+    'email': 'E-mail',
+    'telefone': 'Telefone',
+    'mensagem': 'Mensagem',
+    'enviar-mensagem': 'Enviar Mensagem',
+    'mensagem-sucesso': 'Mensagem recebida com sucesso!',
+    'entraremos-contato': 'Entraremos em contato em breve.',
+    
+    // Form Placeholders
+    'nome-placeholder': 'Seu nome completo',
+    'email-placeholder': 'seu@email.com',
+    'telefone-placeholder': '(24) 99999-9999',
+    'mensagem-placeholder': 'Escreva sua mensagem...'
+  },
+  en: {
+    // Top Bar
+    'liturgia-diaria': 'Daily Liturgy',
+    'santo-do-dia': 'Saint of the Day',
+    'som': 'Sound',
+    'admin': 'Admin',
+    
+    // Header
+    'paroquia-title': 'Immaculate Conception Parish',
+    'paroquia-subtitle': 'Raiz da Serra - Diocese of Petrópolis',
+    
+    // Navigation
+    'inicio': 'Home',
+    'atendimento-confissoes': 'Attendance and Confessions',
+    'adoracao-santissimo': 'Adoration of the Blessed Sacrament',
+    'expediente-secretaria': 'Secretariat Office Hours',
+    'contato': 'Contact',
+    
+    // Hero
+    'bem-vindos': 'Welcome to Our Parish',
+    'hero-text': 'United in faith, prayer and service to others, in the Parish of Raiz da Serra.',
+    
+    // Widgets
+    'comunidades': 'Communities',
+    'nosso-bispo': 'Our Bishop',
+    'nossos-padres': 'Our Priests',
+    'liturgia-diaria-widget': 'Daily Liturgy',
+    'leituras-dia': "Today's Readings",
+    'santo-do-dia-widget': 'Saint of the Day',
+    'vatican-news': 'Vatican News',
+    'calendario-paroquia': 'Parish Calendar',
+    'horarios-missas': 'Mass Schedule',
+    
+    // Sections
+    'noticias-paroquia': 'Parish News',
+    'videos': 'Videos',
+    'atendimento-confissoes-title': 'Attendance and Confessions',
+    'adoracao-santissimo-title': 'Adoration of the Blessed Sacrament',
+    'expediente-secretaria-title': 'Parish Secretariat Office Hours',
+    
+    // Footer
+    'navegacao': 'Navigation',
+    'direitos-reservados': '© 2026 Immaculate Conception Parish of Raiz da Serra. All rights reserved.',
+    'desenvolvido-por': 'Developed by antonioluiz.dev@outlook.com',
+    
+    // Contact Modal
+    'entre-contato': 'Contact Us',
+    'nome': 'Name',
+    'email': 'Email',
+    'telefone': 'Phone',
+    'mensagem': 'Message',
+    'enviar-mensagem': 'Send Message',
+    'mensagem-sucesso': 'Message received successfully!',
+    'entraremos-contato': 'We will contact you soon.',
+    
+    // Form Placeholders
+    'nome-placeholder': 'Your full name',
+    'email-placeholder': 'your@email.com',
+    'telefone-placeholder': '(24) 99999-9999',
+    'mensagem-placeholder': 'Write your message...'
+  },
+  es: {
+    // Top Bar
+    'liturgia-diaria': 'Liturgia Diaria',
+    'santo-do-dia': 'Santo del Día',
+    'som': 'Sonido',
+    'admin': 'Admin',
+    
+    // Header
+    'paroquia-title': 'Parroquia Inmaculada Concepción',
+    'paroquia-subtitle': 'Raiz da Serra - Diócesis de Petrópolis',
+    
+    // Navigation
+    'inicio': 'Inicio',
+    'atendimento-confissoes': 'Atención y Confesiones',
+    'adoracao-santissimo': 'Adoración al Santísimo Sacramento',
+    'expediente-secretaria': 'Horario de Secretaría',
+    'contato': 'Contacto',
+    
+    // Hero
+    'bem-vindos': 'Bienvenidos a Nuestra Parroquia',
+    'hero-text': 'Unidos en la fe, la oración y el servicio al prójimo, en la Parroquia de Raiz da Serra.',
+    
+    // Widgets
+    'comunidades': 'Comunidades',
+    'nosso-bispo': 'Nuestro Obispo',
+    'nossos-padres': 'Nuestros Sacerdotes',
+    'liturgia-diaria-widget': 'Liturgia Diaria',
+    'leituras-dia': 'Lecturas del día',
+    'santo-do-dia-widget': 'Santo del Día',
+    'vatican-news': 'Noticias del Vaticano',
+    'calendario-paroquia': 'Calendario Parroquial',
+    'horarios-missas': 'Horario de Misas',
+    
+    // Sections
+    'noticias-paroquia': 'Noticias de la Parroquia',
+    'videos': 'Videos',
+    'atendimento-confissoes-title': 'Atención y Confesiones',
+    'adoracao-santissimo-title': 'Adoración al Santísimo Sacramento',
+    'expediente-secretaria-title': 'Horario de Secretaría Parroquial',
+    
+    // Footer
+    'navegacao': 'Navegación',
+    'direitos-reservados': '© 2026 Parroquia Inmaculada Concepción de Raiz da Serra. Todos los derechos reservados.',
+    'desenvolvido-por': 'Desarrollado por antonioluiz.dev@outlook.com',
+    
+    // Contact Modal
+    'entre-contato': 'Contacto',
+    'nome': 'Nombre',
+    'email': 'Correo',
+    'telefone': 'Teléfono',
+    'mensagem': 'Mensaje',
+    'enviar-mensagem': 'Enviar Mensaje',
+    'mensagem-sucesso': '¡Mensaje recibido con éxito!',
+    'entraremos-contato': 'Nos pondremos en contacto pronto.',
+    
+    // Form Placeholders
+    'nome-placeholder': 'Su nombre completo',
+    'email-placeholder': 'su@email.com',
+    'telefone-placeholder': '(24) 99999-9999',
+    'mensagem-placeholder': 'Escriba su mensaje...'
+  },
+  it: {
+    // Top Bar
+    'liturgia-diaria': 'Liturgia Giornaliera',
+    'santo-do-dia': 'Santo del Giorno',
+    'som': 'Audio',
+    'admin': 'Admin',
+    
+    // Header
+    'paroquia-title': 'Parrocchia Immacolata Concezione',
+    'paroquia-subtitle': 'Raiz da Serra - Diocesi di Petrópolis',
+    
+    // Navigation
+    'inicio': 'Home',
+    'atendimento-confissoes': 'Attesa e Confessioni',
+    'adoracao-santissimo': 'Adorazione del Santissimo Sacramento',
+    'expediente-secretaria': 'Orari di Segreteria',
+    'contato': 'Contatto',
+    
+    // Hero
+    'bem-vindos': 'Benvenuti nella Nostra Parrocchia',
+    'hero-text': 'Uniti nella fede, nella preghiera e nel servizio al prossimo, nella Parrocchia di Raiz da Serra.',
+    
+    // Widgets
+    'comunidades': 'Comunità',
+    'nosso-bispo': 'Il Nostro Vescovo',
+    'nossos-padres': 'I Nostri Sacerdoti',
+    'liturgia-diaria-widget': 'Liturgia Giornaliera',
+    'leituras-dia': 'Letture del giorno',
+    'santo-do-dia-widget': 'Santo del Giorno',
+    'vatican-news': 'Notizie Vaticane',
+    'calendario-paroquia': 'Calendario Parrocchiale',
+    'horarios-missas': 'Orari delle Messe',
+    
+    // Sections
+    'noticias-paroquia': 'Notizie della Parrocchia',
+    'videos': 'Video',
+    'atendimento-confissoes-title': 'Attesa e Confessioni',
+    'adoracao-santissimo-title': 'Adorazione del Santissimo Sacramento',
+    'expediente-secretaria-title': 'Orari di Segreteria Parrocchiale',
+    
+    // Footer
+    'navegacao': 'Navigazione',
+    'direitos-reservados': '© 2026 Parrocchia Immacolata Concezione di Raiz da Serra. Tutti i diritti riservati.',
+    'desenvolvido-por': 'Sviluppato da antonioluiz.dev@outlook.com',
+    
+    // Contact Modal
+    'entre-contato': 'Contattaci',
+    'nome': 'Nome',
+    'email': 'Email',
+    'telefone': 'Telefono',
+    'mensagem': 'Messaggio',
+    'enviar-mensagem': 'Invia Messaggio',
+    'mensagem-sucesso': 'Messaggio ricevuto con successo!',
+    'entraremos-contato': 'Vi contatteremo presto.',
+    
+    // Form Placeholders
+    'nome-placeholder': 'Il tuo nome completo',
+    'email-placeholder': 'tua@email.com',
+    'telefone-placeholder': '(24) 99999-9999',
+    'mensagem-placeholder': 'Scrivi il tuo messaggio...'
+  }
+};
+
+let currentLanguage = 'pt';
+
+function changeLanguage(lang) {
+  currentLanguage = lang;
+  localStorage.setItem('selectedLanguage', lang);
+  updatePageLanguage();
+  document.getElementById('language-select').value = lang;
+}
+
+function updatePageLanguage() {
+  const trans = translations[currentLanguage];
+  
+  // Update page title
+  document.title = trans['paroquia-title'] + ' - Raiz da Serra';
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = currentLanguage === 'pt' ? 'pt-BR' : currentLanguage;
+  
+  // Top Bar Links
+  updateTextContent('a[href*="liturgia-diaria"]', trans['liturgia-diaria']);
+  updateTextContent('a[href*="santo-do-dia"]', trans['santo-do-dia']);
+  updateTextContent('#mute-label', trans['som']);
+  updateTextContent('.admin-link', trans['admin']);
+  
+  // Header
+  updateTextContent('.header-title h1', trans['paroquia-title']);
+  updateTextContent('.header-title p', trans['paroquia-subtitle']);
+  
+  // Navigation
+  updateTextContent('nav a[onclick*="scrollToTop"]', trans['inicio']);
+  updateTextContent('nav a[href*="atendimento"]', trans['atendimento-confissoes']);
+  updateTextContent('nav a[href*="adoracao"]', trans['adoracao-santissimo']);
+  updateTextContent('nav a[href*="expediente"]', trans['expediente-secretaria']);
+  updateTextContent('nav a[onclick*="openContactModal"]', trans['contato']);
+  
+  // Hero
+  updateTextContent('.hero-content h2', trans['bem-vindos']);
+  updateTextContent('.hero-content p', trans['hero-text']);
+  
+  // Widgets
+  updateTextContent('.widget-title', trans['comunidades'], 0);
+  updateTextContent('.widget-title', trans['nosso-bispo'], 1);
+  updateTextContent('.widget-title', trans['nossos-padres'], 2);
+  updateTextContent('.aside-link-text .label', trans['liturgia-diaria-widget'], 0);
+  updateTextContent('.aside-link-text .sub', trans['leituras-dia'], 0);
+  updateTextContent('.aside-link-text .label', trans['santo-do-dia-widget'], 1);
+  updateTextContent('.aside-link-text .sub', trans['vatican-news'], 1);
+  updateTextContent('.widget-title', trans['calendario-paroquia'], 3);
+  updateTextContent('.widget-title', trans['horarios-missas'], 4);
+  
+  // Main Content
+  updateTextContent('.section-title', trans['noticias-paroquia'], 0);
+  updateTextContent('.section-title', trans['videos'], 1);
+  
+  // Sections
+  updateTextContent('#sec-atendimento h2', trans['atendimento-confissoes-title']);
+  updateTextContent('#sec-adoracao h2', trans['adoracao-santissimo-title']);
+  updateTextContent('#sec-expediente h2', trans['expediente-secretaria-title']);
+  
+  // Footer
+  updateTextContent('.footer-col h4', trans['paroquia-title'], 0);
+  updateTextContent('.footer-col h4', trans['navegacao'], 1);
+  updateTextContent('.footer-links a', trans['inicio'], 0);
+  updateTextContent('.footer-links a', trans['atendimento-confissoes'], 1);
+  updateTextContent('.footer-links a', trans['adoracao-santissimo'], 2);
+  updateTextContent('.footer-links a', trans['expediente-secretaria'], 3);
+  updateTextContent('.footer-links a', trans['contato'], 4);
+  
+  // Contact Modal
+  updateTextContent('.contact-modal h2', trans['entre-contato']);
+  updateTextContent('.form-group label', trans['nome'], 0);
+  updateTextContent('.form-group label', trans['email'], 1);
+  updateTextContent('.form-group label', trans['telefone'], 2);
+  updateTextContent('.form-group label', trans['mensagem'], 3);
+  updateTextContent('.btn-send', trans['enviar-mensagem']);
+  
+  // Update placeholders
+  updatePlaceholder('#contact-nome', trans['nome-placeholder']);
+  updatePlaceholder('#contact-email', trans['email-placeholder']);
+  updatePlaceholder('#contact-tel', trans['telefone-placeholder']);
+  updatePlaceholder('#contact-msg', trans['mensagem-placeholder']);
+  
+  // Update footer copyright
+  const footerBottom = document.querySelector('.footer-bottom');
+  if (footerBottom) {
+    footerBottom.innerHTML = trans['direitos-reservados'] + '<br>' + trans['desenvolvido-por'];
+  }
+}
+
+function updateTextContent(selector, text, index = null) {
+  const elements = document.querySelectorAll(selector);
+  if (index !== null && elements[index]) {
+    elements[index].textContent = text;
+  } else {
+    elements.forEach(el => el.textContent = text);
+  }
+}
+
+function updatePlaceholder(selector, text) {
+  const element = document.querySelector(selector);
+  if (element) {
+    element.placeholder = text;
+  }
+}
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const savedLanguage = localStorage.getItem('selectedLanguage') || 'pt';
+  changeLanguage(savedLanguage);
+});
+
+/* ============================================================
    DADOS PADRÃO
    ============================================================ */
 
