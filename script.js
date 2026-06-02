@@ -8,6 +8,7 @@ const translations = {
     'liturgia-diaria': 'Liturgia Diária',
     'santo-do-dia': 'Santo do Dia',
     'som': 'Som',
+    'mudo': 'Mudo',
     'admin': 'Admin',
     
     // Header
@@ -69,6 +70,7 @@ const translations = {
     'liturgia-diaria': 'Daily Liturgy',
     'santo-do-dia': 'Saint of the Day',
     'som': 'Sound',
+    'mudo': 'Muted',
     'admin': 'Admin',
     
     // Header
@@ -130,6 +132,7 @@ const translations = {
     'liturgia-diaria': 'Liturgia Diaria',
     'santo-do-dia': 'Santo del Día',
     'som': 'Sonido',
+    'mudo': 'Silenciado',
     'admin': 'Admin',
     
     // Header
@@ -191,6 +194,7 @@ const translations = {
     'liturgia-diaria': 'Liturgia Giornaliera',
     'santo-do-dia': 'Santo del Giorno',
     'som': 'Audio',
+    'mudo': 'Silenzio',
     'admin': 'Admin',
     
     // Header
@@ -260,54 +264,57 @@ function changeLanguage(lang) {
 
 function updatePageLanguage() {
   const trans = translations[currentLanguage];
-  
+
   // Update page title
   document.title = trans['paroquia-title'] + ' - Raiz da Serra';
-  
+
   // Update HTML lang attribute
   document.documentElement.lang = currentLanguage === 'pt' ? 'pt-BR' : currentLanguage;
-  
-  // Top Bar Links
-  updateTextContent('a[href*="liturgia-diaria"]', trans['liturgia-diaria']);
-  updateTextContent('a[href*="santo-do-dia"]', trans['santo-do-dia']);
+
+  // Top Bar Links (seletor específico para não afetar os aside-links)
+  updateTextContent('.top-bar-links a[href*="liturgia-diaria"]', trans['liturgia-diaria']);
+  updateTextContent('.top-bar-links a[href*="santo-do-dia"]', trans['santo-do-dia']);
   updateTextContent('#mute-label', trans['som']);
   updateTextContent('.admin-link', trans['admin']);
-  
+
   // Header
   updateTextContent('.header-title h1', trans['paroquia-title']);
   updateTextContent('.header-title p', trans['paroquia-subtitle']);
-  
+
   // Navigation
   updateTextContent('nav a[onclick*="scrollToTop"]', trans['inicio']);
   updateTextContent('nav a[href*="atendimento"]', trans['atendimento-confissoes']);
   updateTextContent('nav a[href*="adoracao"]', trans['adoracao-santissimo']);
   updateTextContent('nav a[href*="expediente"]', trans['expediente-secretaria']);
   updateTextContent('nav a[onclick*="openContactModal"]', trans['contato']);
-  
+
   // Hero
   updateTextContent('.hero-content h2', trans['bem-vindos']);
   updateTextContent('.hero-content p', trans['hero-text']);
-  
-  // Widgets
-  updateTextContent('.widget-title', trans['comunidades'], 0);
-  updateTextContent('.widget-title', trans['nosso-bispo'], 1);
-  updateTextContent('.widget-title', trans['nossos-padres'], 2);
+
+  // Widget-titles: usa updateElementText para preservar os ícones SVG
+  const widgetTitles = document.querySelectorAll('.widget-title');
+  updateElementText(widgetTitles[0], trans['comunidades']);
+  updateElementText(widgetTitles[1], trans['nosso-bispo']);
+  updateElementText(widgetTitles[2], trans['nossos-padres']);
+  updateElementText(widgetTitles[3], trans['calendario-paroquia']);
+  updateElementText(widgetTitles[4], trans['horarios-missas']);
+
+  // Aside-links (Liturgia Diária e Santo do Dia no aside direito)
   updateTextContent('.aside-link-text .label', trans['liturgia-diaria-widget'], 0);
   updateTextContent('.aside-link-text .sub', trans['leituras-dia'], 0);
   updateTextContent('.aside-link-text .label', trans['santo-do-dia-widget'], 1);
   updateTextContent('.aside-link-text .sub', trans['vatican-news'], 1);
-  updateTextContent('.widget-title', trans['calendario-paroquia'], 3);
-  updateTextContent('.widget-title', trans['horarios-missas'], 4);
-  
+
   // Main Content
   updateTextContent('.section-title', trans['noticias-paroquia'], 0);
   updateTextContent('.section-title', trans['videos'], 1);
-  
+
   // Sections
   updateTextContent('#sec-atendimento h2', trans['atendimento-confissoes-title']);
   updateTextContent('#sec-adoracao h2', trans['adoracao-santissimo-title']);
   updateTextContent('#sec-expediente h2', trans['expediente-secretaria-title']);
-  
+
   // Footer
   updateTextContent('.footer-col h4', trans['paroquia-title'], 0);
   updateTextContent('.footer-col h4', trans['navegacao'], 1);
@@ -316,7 +323,7 @@ function updatePageLanguage() {
   updateTextContent('.footer-links a', trans['adoracao-santissimo'], 2);
   updateTextContent('.footer-links a', trans['expediente-secretaria'], 3);
   updateTextContent('.footer-links a', trans['contato'], 4);
-  
+
   // Contact Modal
   updateTextContent('.contact-modal h2', trans['entre-contato']);
   updateTextContent('.form-group label', trans['nome'], 0);
@@ -324,13 +331,13 @@ function updatePageLanguage() {
   updateTextContent('.form-group label', trans['telefone'], 2);
   updateTextContent('.form-group label', trans['mensagem'], 3);
   updateTextContent('.btn-send', trans['enviar-mensagem']);
-  
+
   // Update placeholders
   updatePlaceholder('#contact-nome', trans['nome-placeholder']);
   updatePlaceholder('#contact-email', trans['email-placeholder']);
   updatePlaceholder('#contact-tel', trans['telefone-placeholder']);
   updatePlaceholder('#contact-msg', trans['mensagem-placeholder']);
-  
+
   // Update footer copyright
   const footerBottom = document.querySelector('.footer-bottom');
   if (footerBottom) {
@@ -344,6 +351,18 @@ function updateTextContent(selector, text, index = null) {
     elements[index].textContent = text;
   } else {
     elements.forEach(el => el.textContent = text);
+  }
+}
+
+// Atualiza apenas o nó de texto de um elemento, preservando ícones SVG filhos
+function updateElementText(element, text) {
+  if (!element) return;
+  const nodes = Array.from(element.childNodes);
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    if (nodes[i].nodeType === Node.TEXT_NODE) {
+      nodes[i].textContent = ' ' + text;
+      return;
+    }
   }
 }
 
@@ -864,7 +883,8 @@ function toggleMute() {
   audio.muted = audioMuted;
   document.getElementById('mute-icon-on').style.display = audioMuted ? 'none' : 'block';
   document.getElementById('mute-icon-off').style.display = audioMuted ? 'block' : 'none';
-  document.getElementById('mute-label').textContent = audioMuted ? 'Mudo' : 'Som';
+  const trans = translations[currentLanguage] || translations['pt'];
+  document.getElementById('mute-label').textContent = audioMuted ? (trans['mudo'] || 'Mudo') : (trans['som'] || 'Som');
   if (!audioMuted) audio.play().catch(() => {});
 }
 

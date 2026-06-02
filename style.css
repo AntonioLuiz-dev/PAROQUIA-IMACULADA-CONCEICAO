@@ -23,6 +23,7 @@
 
 html {
   font-size: 19px;
+  overflow-x: hidden;
 }
 
 body {
@@ -30,6 +31,7 @@ body {
   background: var(--cream);
   color: var(--text);
   line-height: 1.7;
+  overflow-x: hidden;
 }
 
 a {
@@ -1345,14 +1347,32 @@ footer {
     font-size: 16px;
   }
 
+  /* Top bar: oculta links e admin, mantém idioma + social */
   .top-bar {
-    padding: 6px 14px;
-    flex-wrap: wrap;
+    padding: 6px 12px;
     gap: 8px;
   }
 
-  .top-bar-links a {
-    margin-right: 10px;
+  .top-bar-links {
+    display: none;
+  }
+
+  .admin-link {
+    display: none;
+  }
+
+  .top-bar-social {
+    gap: 7px;
+  }
+
+  .social-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .social-icon svg {
+    width: 14px;
+    height: 14px;
   }
 
   .header-inner {
@@ -1374,8 +1394,12 @@ footer {
     font-size: 1.3rem;
   }
 
+  .nav-inner {
+    padding: 0 8px;
+  }
+
   nav a {
-    padding: 12px 14px;
+    padding: 12px 12px;
     font-size: .78rem;
   }
 
@@ -1431,11 +1455,24 @@ footer {
   }
 
   .body-section-body {
-    padding: 20px 18px;
+    padding: 20px 16px;
+  }
+
+  .body-section-header {
+    padding: 16px 18px;
+  }
+
+  .body-section-header h2 {
+    font-size: 1.1rem;
   }
 
   .horarios-grid {
     grid-template-columns: 1fr;
+  }
+
+  .expediente-linha {
+    flex-wrap: wrap;
+    gap: 4px;
   }
 
   .modal-content {
@@ -1458,12 +1495,21 @@ footer {
   }
 
   nav a {
-    padding: 11px 10px;
-    font-size: .73rem;
-    letter-spacing: .03em;
+    padding: 10px 8px;
+    font-size: .72rem;
+    letter-spacing: .02em;
   }
 
   .hero h2 {
     font-size: 1.6rem;
+  }
+
+  /* Oculta rótulo do botão mudo em telas muito pequenas */
+  #mute-label {
+    display: none;
+  }
+
+  .mute-btn {
+    padding: 5px 8px;
   }
 }
